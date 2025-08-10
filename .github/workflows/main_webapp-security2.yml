@@ -33,8 +33,9 @@ jobs:
         run: |
           mkdir deploy
           cp -r ./.next/standalone/. ./deploy
-          cp -r ./public ./deploy
+          cp -r ./public ./deploy/public  # publicディレクトリを正しい場所にコピー
           cp -r ./.next/static/. ./deploy/.next/static
+          cp package.json ./deploy/
 
       - name: Zip artifact for deployment
         run: zip release.zip ./deploy -r    # 変更点➁
