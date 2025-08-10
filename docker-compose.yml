@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Next.js Frontend
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatbot-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=1234
+      - AUTH0_CLIENT_ID=8FsCtsePjnnKm8gh3rHhAVdXMvO0dG1K
+      - AUTH0_CLIENT_SECRET=CtzAd5RkSLEDfqXbNVqyVjd2oeoc4xeRDWOCnglDyf1TUKi53MQaOBanH0ANXZVm
+      - AUTH0_ISSUER=https://dev-j76wm3iud1ihfek5.us.auth0.com
+      - AUTH0_SECRET=1234
+      - FASTAPI_URL=http://chatbot-backend:8000
+    volumes:
+      # 開発時のホットリロード用（本番では削除）
+      - ./src:/app/src
+      - ./public:/app/public
