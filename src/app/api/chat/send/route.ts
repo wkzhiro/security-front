@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
       },
       // NODE_TLS_REJECT_UNAUTHORIZED環境変数で制御
-      ...(process.env.NODE_ENV === 'development' && {
+      ...(process.env.NODE_TLS_REJECT_UNAUTHORIZED && {
         httpsAgent: new (await import('https')).Agent({
           rejectUnauthorized: false
         })
