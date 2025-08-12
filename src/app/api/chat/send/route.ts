@@ -27,7 +27,18 @@ export async function POST(request: NextRequest) {
     // FastAPIサーバーのURL（環境変数から取得、デフォルトはlocalhost）
     const fastApiUrl = process.env.FASTAPI_URL || "http://localhost:8000";
 
+    // 送信するデータをログに出力（デバッグ用）
+    const requestData = {
+      message,
+      user_email: userEmail || session.user?.email,
+    };
+    console.log("Sending request to FastAPI:", {
+      url: `${fastApiUrl}/chat`,
+      data: requestData
+    });
+
     // FastAPIサーバーにリクエストを送信
+    // 開発環境での自己証明書を許可する設定
     const response = await axios.post(`${fastApiUrl}/chat`, {
       message,
       user_email: userEmail || session.user?.email,
@@ -36,6 +47,12 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
       },
+      // NODE_TLS_REJECT_UNAUTHORIZED環境変数で制御
+      ...(process.env.NODE_ENV === 'development' && {
+        httpsAgent: new (await import('https')).Agent({
+          rejectUnauthorized: false
+        })
+      })
     });
 
     return NextResponse.json({
@@ -58,10 +75,15 @@ export async function POST(request: NextRequest) {
       }
       
       if (error.response?.status) {
+        // 422エラーの場合、詳細なエラー情報をログに出力
+        if (error.response.status === 422) {
+          console.error("Validation error details:", error.response.data);
+        }
+        
         return NextResponse.json(
           { 
             error: "チャットボットサーバーでエラーが発生しました。",
-            details: error.response.data?.detail || "Unknown error"
+            details: error.response.data?.detail || error.response.data || "Unknown error"
           },
           { status: error.response.status }
         );
