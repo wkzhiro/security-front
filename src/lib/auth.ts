@@ -8,7 +8,8 @@ export const authOptions = {
             issuer: process.env.AUTH0_ISSUER!,
             authorization: {
                 params: {
-                    scope: "openid email profile"
+                    scope: "openid email profile",
+                    audience: process.env.AUTH0_AUDIENCE,
                 }
             }
         }),
