@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // FastAPIサーバーのURL（環境変数から取得、デフォルトはlocalhost）
-    const fastApiUrl = process.env.FASTAPI_URL || "http://localhost:8000";
+    const fastApiUrl = process.env.FASTAPI_URL || "http://127.0.0.1:8000";
 
     // 送信するデータをログに出力（デバッグ用）
     const requestData = {
@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
       timeout: 30000, // 30秒のタイムアウト
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.accessToken}`,
       },
       // NODE_TLS_REJECT_UNAUTHORIZED環境変数で制御
       ...(process.env.NODE_TLS_REJECT_UNAUTHORIZED && {
